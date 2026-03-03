@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bacigor Mamang - Kemitraan Viral</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .brand-gradient {
+            background: linear-gradient(135deg, #D32027 0%, #EE3124 100%);
+        }
+
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Running Text Styling */
+        .marquee-container {
+            background: #ffeb3b;
+            color: #D32027;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 10px 0;
+            font-weight: 800;
+            font-size: 0.9rem;
+            border-bottom: 2px solid #D32027;
+        }
+
+        .marquee-text {
+            display: inline-block;
+            animation: marquee 25s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        /* Modal / Form Styling */
+        #registrationModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Container Video ScreenPal */
+        .sp-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            max-width: 100%;
+            background: #000;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .sp-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: #1a1a1a;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: auto;
+            display: none;
+        }
+
+        #videoPlaceholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #666;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .custom-file-upload {
+            background: #EE3124;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+        }
+
+        /* Floating WhatsApp Button */
+        .floating-wa {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #25d366;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50px;
+            text-align: center;
+            font-size: 30px;
+            box-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .floating-wa:hover {
+            transform: scale(1.1);
+            background-color: #128c7e;
+        }
+
+        .wa-tooltip {
+            position: absolute;
+            right: 70px;
+            background: white;
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .floating-wa:hover .wa-tooltip {
+            opacity: 1;
+        }
+
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #EE3124;
+            animation: spin 1s linear infinite;
+            display: none;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Header / Navbar -->
+    <nav class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 brand-gradient rounded-full flex items-center justify-center text-white font-bold text-xl shadow-md">B</div>
+                <span class="font-extrabold text-xl tracking-tight text-red-600">BACIGOR <span class="text-yellow-500">MAMANG</span></span>
+            </div>
+            <button onclick="openModal('Umum')" class="bg-red-600 text-white px-5 py-2 rounded-full font-bold text-sm hover:bg-red-700 transition">Gabung</button>
+        </div>
+    </nav>
+
+    <!-- Running Text (Teks Berjalan) -->
+    <div class="marquee-container">
+        <div class="marquee-text">
+            TINGGAL NUNGGU PAKET SAMPAI SEMUA SUDAH LENGKAP TINGGAL SIAP JUALAN DIMANA PUN ANDA BERADA KAMI SIAP ANTAR CHAT ADMIN WA 085353296923 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; 
+            TINGGAL NUNGGU PAKET SAMPAI SEMUA SUDAH LENGKAP TINGGAL SIAP JUALAN DIMANA PUN ANDA BERADA KAMI SIAP ANTAR CHAT ADMIN WA 085353296923 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp;
+            TINGGAL NUNGGU PAKET SAMPAI SEMUA SUDAH LENGKAP TINGGAL SIAP JUALAN DIMANA PUN ANDA BERADA KAMI SIAP ANTAR CHAT ADMIN WA 085353296923
+        </div>
+    </div>
+
+    <!-- Hero Section Split -->
+    <section class="brand-gradient text-white py-16 px-4">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+            <div class="text-center md:text-left">
+                <span class="bg-yellow-400 text-red-700 px-4 py-1 rounded-full text-xs font-bold mb-4 inline-block tracking-wide uppercase">🔥 Kemitraan Terlaris 2026</span>
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight uppercase">Bisnis Viral,<br>Modal Minimal!</h1>
+                <p class="text-lg mb-8 opacity-90">Gabung bersama 100+ mitra lainnya dan raup keuntungan harian dengan resep rahasia Mamang.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                    <button onclick="openModal('Daftar Cepat')" class="bg-white text-red-600 px-8 py-4 rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-lg text-center">Daftar Sekarang</button>
+                    <a href="#paket" class="border-2 border-white/30 backdrop-blur-sm text-white px-8 py-4 rounded-xl font-bold text-lg hover:bg-white/10 transition text-center">Lihat Paket</a>
+                </div>
+            </div>
+            
+            <!-- Video ScreenPal dengan Autoplay & Muted (Permanen) -->
+            <div class="w-full">
+                <div class="sp-container shadow-2xl border-4 border-white/10">
+                    <iframe 
+                        src="https://go.screenpal.com/player/cOeehKnZjh5?autoplay=1&muted=1&loop=1&width=100%&height=100%&ff=1&title=0" 
+                        frameborder="0" 
+                        allow="autoplay; fullscreen" 
+                        allowfullscreen="true">
+                    </iframe>
+                </div>
+                <p class="text-center text-[10px] mt-4 opacity-70 italic font-medium uppercase tracking-widest">Video Profil Bacigor Mamang - Terputar Otomatis</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Modal -->
+    <div id="registrationModal">
+        <div class="max-w-lg mx-auto bg-white rounded-[2rem] overflow-hidden shadow-2xl mt-10 mb-20 relative">
+            <button onclick="closeModal()" class="absolute top-5 right-5 text-gray-400 hover:text-red-600 text-2xl">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="brand-gradient p-8 text-white text-center">
+                <h2 class="text-2xl font-bold uppercase tracking-tight">Formulir Pendaftaran</h2>
+                <p class="text-xs opacity-80 mt-1 uppercase tracking-widest">Lengkapi data untuk bergabung bersama Mamang</p>
+            </div>
+            
+            <form id="waForm" class="p-8 space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Nama Lengkap</label>
+                    <input type="text" id="regNama" required placeholder="Masukkan Nama Sesuai KTP" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-600">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Alamat Lengkap</label>
+                    <textarea id="regAlamat" required rows="3" placeholder="Masukkan alamat untuk pengiriman paket" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-600"></textarea>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">File Foto KTP</label>
+                    <input type="file" id="regKTP" accept="image/*" class="w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    <p class="text-[10px] text-gray-400 mt-1 italic">*Upload file KTP untuk validasi data kemitraan</p>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Pilihan Paket</label>
+                    <select id="regPaket" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-600 font-bold text-gray-700">
+                        <option value="">-- Pilih Paket Kemitraan --</option>
+                        <option value="Paket Hemat - Rp 3.2jt">Paket Hemat - Rp 3.2jt</option>
+                        <option value="Paket Starter - Rp 5.2jt">Paket Starter - Rp 5.2jt</option>
+                        <option value="Paket Racing - Rp 6.7jt">Paket Racing - Rp 6.7jt</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Pilihan Bank / E-Wallet</label>
+                    <select id="regBayar" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-red-600">
+                        <option value="">-- Pilih Cara Bayar --</option>
+                        <option value="Transfer Bank (BCA/Mandiri/BRI)">Transfer Bank (BCA/Mandiri/BRI)</option>
+                        <option value="E-Wallet (Dana/OVO/ShopeePay)">E-Wallet (Dana/OVO/ShopeePay)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="w-full brand-gradient text-white py-4 rounded-xl font-black uppercase tracking-widest shadow-lg hover:shadow-red-200 transition">
+                    Kirim Data ke WhatsApp <i class="fab fa-whatsapp ml-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Video Section (Upload Mandiri dengan Penyimpanan Permanen) -->
+    <section id="video-section" class="py-16 px-4 max-w-5xl mx-auto">
+        <div class="bg-white p-4 md:p-8 rounded-[2.5rem] card-shadow border-2 border-dashed border-gray-200">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 italic">"Video Outlet Tersimpan Permanen"</h2>
+                <p class="text-gray-500 mt-2 text-sm text-balance">Video yang Anda upload akan tetap tersimpan di browser ini meskipun halaman ditutup.</p>
+            </div>
+            
+            <div class="video-wrapper" id="dropZone">
+                <div id="videoPlaceholder">
+                    <i class="fas fa-file-video text-5xl mb-4 opacity-20 text-red-600"></i>
+                    <p class="text-sm font-medium">Belum ada video disimpan</p>
+                    <div id="spinner" class="loading-spinner"></div>
+                    <label for="videoInput" class="custom-file-upload">
+                        <i class="fas fa-plus mr-2"></i> UPLOAD & SIMPAN VIDEO
+                    </label>
+                    <input type="file" id="videoInput" accept="video/mp4,video/x-m4v,video/*" class="hidden">
+                    <button id="clearVideo" class="mt-4 text-[10px] text-red-400 font-bold uppercase tracking-widest hidden">Hapus Video Permanen</button>
+                </div>
+                <video id="videoPlayer" controls loop class="w-full h-full object-contain"></video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Paket Kemitraan -->
+    <section id="paket" class="py-16 px-4 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-black text-gray-900 tracking-tight uppercase">Pilihan Paket Cuan</h2>
+            <div class="h-1 w-20 bg-red-600 mx-auto mt-2"></div>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8 lg:gap-10">
+            <!-- Paket Baru Rp 3.2jt -->
+            <div class="bg-white border-2 border-gray-100 rounded-3xl p-8 card-shadow flex flex-col">
+                <h3 class="text-xl font-bold mb-2">Paket Hemat</h3>
+                <div class="text-3xl font-extrabold text-gray-800 mb-6">Rp 3.2jt</div>
+                <ul class="space-y-3 mb-8 text-sm text-gray-600 font-medium flex-grow">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Booth Standar</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Bahan Baku Awal 20 Porsi</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Alat Masak Dasar</li>
+                </ul>
+                <button onclick="openModal('Paket Hemat - Rp 3.2jt')" class="block text-center bg-gray-200 text-gray-800 py-4 rounded-xl font-bold hover:bg-gray-300 transition">Pilih Paket</button>
+            </div>
+
+            <!-- Paket Starter -->
+            <div class="bg-white border-2 border-gray-100 rounded-3xl p-8 card-shadow flex flex-col">
+                <h3 class="text-xl font-bold mb-2">Paket Starter</h3>
+                <div class="text-3xl font-extrabold text-red-600 mb-6">Rp 5.2jt</div>
+                <ul class="space-y-3 mb-8 text-sm text-gray-600 font-medium flex-grow">
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Booth Portable Premium</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Bahan Baku Awal 50 Porsi</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Seragam Mamang (2pcs)</li>
+                    <li><i class="fas fa-check text-green-500 mr-2"></i> Media Promosi Digital</li>
+                </ul>
+                <button onclick="openModal('Paket Starter - Rp 5.2jt')" class="block text-center bg-gray-900 text-white py-4 rounded-xl font-bold hover:bg-black transition">Ambil Promo</button>
+            </div>
+            
+            <!-- Paket Racing -->
+            <div class="bg-white border-4 border-yellow-400 rounded-3xl p-8 card-shadow transform md:scale-105 relative flex flex-col">
+                <div class="bg-yellow-400 text-red-800 text-[10px] font-black px-3 py-1 rounded-full absolute top-4 right-4 uppercase tracking-widest">Terlaris</div>
+                <h3 class="text-xl font-bold mb-2 text-red-600 uppercase">Paket Racing</h3>
+                <div class="text-3xl font-extrabold text-red-600 mb-6">Rp 6.7jt</div>
+                <ul class="space-y-3 mb-8 text-sm text-gray-800 font-bold flex-grow">
+                    <li><i class="fas fa-fire text-orange-500 mr-2"></i> Booth Racing Exclusive</li>
+                    <li><i class="fas fa-fire text-orange-500 mr-2"></i> Support Iklan Berbayar</li>
+                    <li><i class="fas fa-fire text-orange-500 mr-2"></i> Free Konten Sosmed Harian</li>
+                    <li><i class="fas fa-fire text-orange-500 mr-2"></i> Konsultasi Strategi Bisnis</li>
+                </ul>
+                <button onclick="openModal('Paket Racing - Rp 6.7jt')" class="block text-center bg-red-600 text-white py-4 rounded-xl font-bold hover:bg-red-700 transition shadow-lg uppercase">GABUNG SEKARANG</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white py-12 px-4 border-t border-gray-100 text-center">
+        <div class="font-extrabold text-2xl text-red-600 mb-2 italic tracking-tighter">BACIGOR MAMANG</div>
+        <p class="text-gray-400 text-[10px] uppercase tracking-widest font-bold">PT. Mamang Cuan Abadi &copy; 2026</p>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <button onclick="openModal('Tanya-tanya')" class="floating-wa shadow-xl">
+        <i class="fab fa-whatsapp"></i>
+        <span class="wa-tooltip">Pendaftaran / Chat Admin!</span>
+    </button>
+
+    <script>
+        // Modal Logic
+        const modal = document.getElementById('registrationModal');
+        const regPaket = document.getElementById('regPaket');
+
+        function openModal(paketName) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Stop scroll
+            
+            // Auto select paket if specific button clicked
+            if(paketName.includes('Rp')) {
+                regPaket.value = paketName;
+            }
+        }
+
+        function closeModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Enable scroll
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Form Submission to WhatsApp
+        document.getElementById('waForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const nama = document.getElementById('regNama').value;
+            const alamat = document.getElementById('regAlamat').value;
+            const paket = document.getElementById('regPaket').value;
+            const bayar = document.getElementById('regBayar').value;
+            const ktpStatus = document.getElementById('regKTP').files[0] ? "DILAMPIRKAN (Lampirkan di Chat WA Berikutnya)" : "TIDAK ADA";
+
+            const waNumber = "6285353296923";
+            const message = `HALO ADMIN BACIGOR MAMANG,%0A%0A` +
+                            `Saya ingin mendaftar kemitraan dengan data berikut:%0A` +
+                            `--------------------------------------------------%0A` +
+                            `👤 Nama: ${nama}%0A` +
+                            `📍 Alamat: ${alamat}%0A` +
+                            `📦 Paket: ${paket}%0A` +
+            
